@@ -1,60 +1,17 @@
-# Naymoon Cartel — Dashboard des demandes d'abonnement
+# Naymoon Cartel — version universelle
 
-Dashboard privé dans l'identité visuelle Naymoon. Il lit les demandes depuis le Google Sheet fourni, permet de modifier le statut et calcule les totaux filtrés.
+Cette version ne contient aucune fonction serveur et aucune variable d’environnement.
+Elle se déploie sur Vercel et Netlify.
 
-## Fonctions
+## Build
+- Commande : `npm run build`
+- Dossier publié : `dist`
 
-- Connexion par mot de passe avec cookie HttpOnly signé.
-- Lecture sécurisée des demandes via une API Vercel.
-- Statuts persistants dans Google Sheet : `pending`, `paid`, `cancelled`.
-- Ajout automatique de la colonne `status` si elle n'existe pas.
-- Totaux en attente, payés et annulés.
-- Filtre par période, statut et recherche.
-- Consultation et copie de la commande SQL.
-- Interface responsive dans le thème Naymoon.
+## Données
+La feuille Google Sheets publique est lue via l’export CSV avec l’ID intégré au code.
 
-## 1. Installer Google Apps Script
+## Statuts
+Les statuts sont enregistrés dans le `localStorage` du navigateur. Ils ne sont donc pas partagés entre plusieurs appareils et ne modifient pas la feuille Google.
 
-1. Ouvrir le Google Sheet.
-2. Extensions → Apps Script.
-3. Remplacer le contenu de `Code.gs` par `apps-script/Code.gs`.
-4. Dans Apps Script : Paramètres du projet → Propriétés du script.
-5. Ajouter `SHEET_API_KEY` avec une longue valeur aléatoire.
-6. Déployer → Nouveau déploiement → Application Web.
-7. Exécuter en tant que : Moi.
-8. Qui a accès : Tout le monde.
-9. Copier l'URL se terminant par `/exec`.
-
-L'URL est publique, mais toutes les opérations sont refusées sans `SHEET_API_KEY`.
-
-## 2. Déployer sur Vercel
-
-Importer ce dossier dans Vercel puis ajouter :
-
-```env
-ADMIN_PASSWORD=naymooncartelgodadminpasskey22577
-AUTH_SECRET=une-longue-cle-aleatoire-differente
-GOOGLE_APPS_SCRIPT_URL=https://script.google.com/macros/s/DEPLOYMENT_ID/exec
-SHEET_API_KEY=la-meme-cle-que-dans-apps-script
-```
-
-Relancer un déploiement après l'ajout des variables.
-
-## 3. Colonne de statut
-
-Le script ajoute automatiquement une colonne `status` à droite des colonnes existantes. Toute ligne sans statut est affichée comme `pending`.
-
-Correspondance :
-
-- `pending` → En attente
-- `paid` → Payé
-- `cancelled` → Annulé
-
-## Développement local
-
-```bash
-npm install
-npm run dev
-```
-
-Les routes `/api` sont des fonctions Vercel : le test complet de l'authentification et des mises à jour se fait avec `vercel dev` ou après déploiement.
+## Mot de passe
+Le mot de passe est inclus dans le JavaScript comme demandé. Il ne constitue pas une sécurité serveur forte : une personne technique peut le retrouver dans les fichiers publics.
